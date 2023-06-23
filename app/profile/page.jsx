@@ -4,13 +4,19 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Profile from "@components/Profile";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 const MyProfile = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
   const [posts, setPosts] = useState([]);
+
   useEffect(() => {
+    if (!session?.user.id) {
+      toast.error("Bạn vui lòng đăng nhập!");
+      router.push("/");
+    }
     const fetchPosts = async () => {
       const response = await fetch(`/api/users/${session?.user.id}/posts`);
       const data = await response.json();

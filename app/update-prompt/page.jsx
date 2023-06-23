@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import Form from "@components/Form";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const EditPrompt = () => {
   const router = useRouter();
+  const { data: session } = useSession();
+
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
   const [submitting, setSubmitting] = useState(false);
@@ -16,23 +19,26 @@ const EditPrompt = () => {
     tag: "",
   });
 
+  const getPromptDetails = async () => {
+    const response = await fetch(`/api/prompt/${promptId}`);
+    const data = await response.json();
+    setPost({
+      idUser: data.creator._id,
+      idPrompt: data._id,
+      prompt: data.prompt,
+      tag: data.tag,
+    });
+  };
+
   useEffect(() => {
-    const getPromptDetails = async () => {
-      const response = await fetch(`/api/prompt/${promptId}`);
-      const data = await response.json();
-      setPost({
-        prompt: data.prompt,
-        tag: data.tag,
-      });
-    };
-    if (promptId) getPromptDetails();
+    if (promptId) {
+      getPromptDetails();
+    }
   }, [promptId]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-
-    if (!promptId) return alert("Prompt ID not found");
 
     try {
       const response = await fetch(`/api/prompt/${promptId}`, {
@@ -51,6 +57,14 @@ const EditPrompt = () => {
       setSubmitting(false);
     }
   };
+
+  if (post.idUser) {
+    if (session?.user.id !== post.idUser) {
+      toast.error("Bạn không có quyền truy cập!");
+      router.push("/");
+    }
+  }
+
   return (
     <Form
       type="Edit"

@@ -23,7 +23,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
             onChange={(e) => setPost({ ...post, prompt: e.target.value })}
             placeholder="Write your prompt here..."
             required
-            className="form_textarea"
+            className="form_textarea resize-none overflow-y-hidden"
           />
         </label>
         <label>

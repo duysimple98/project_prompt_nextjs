@@ -7,6 +7,9 @@ import "react-toastify/dist/ReactToastify.css";
 export const metadata = {
   title: "Promptopia",
   description: "Discover & Share AI Prompts",
+  icons: {
+    icon: "/assets/logo.ico",
+  },
 };
 
 const RootLayout = ({ children }) => (
