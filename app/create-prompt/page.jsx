@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import Form from "@components/Form";
-import { POST } from "@app/api/auth/[...nextauth]/route";
+import { toast } from "react-toastify";
 
 const CreatePrompt = () => {
   const router = useRouter();
@@ -15,6 +15,14 @@ const CreatePrompt = () => {
     prompt: "",
     tag: "",
   });
+
+  useEffect(() => {
+    if (session?.user.id === undefined) {
+      toast.error("Bạn vui lòng đăng nhập!");
+      router.push("/");
+    }
+  }, [session?.user.id]);
+
   const createPrompt = async (e) => {
     e.preventDefault();
     setSubmitting(true);
